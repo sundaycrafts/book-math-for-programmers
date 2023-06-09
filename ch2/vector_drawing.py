@@ -23,6 +23,14 @@ class Polygon():
         self.fill = fill
         self.alpha = alpha
 
+class Circle():
+    def __init__(self, center, radius, color=blue, fill=None, alpha=0.4):
+        self.center = center
+        self.radius = radius
+        self.color = color
+        self.fill = fill
+        self.alpha = alpha
+
 class Points():
     def __init__(self, *vectors, color=black):
         self.vectors = list(vectors)
@@ -52,6 +60,11 @@ def extract_vectors(objects):
         elif type(object) == Arrow:
             yield object.tip
             yield object.tail
+        elif type(object) == Circle:
+            center_x, center_y = object.center
+            radius = object.radius
+            yield center_x - radius, center_y - radius
+            yield center_x + radius, center_y + radius
         elif type(object) == Segment:
             yield object.start_point
             yield object.end_point
@@ -119,6 +132,10 @@ def draw(*objects, origin=True, axes=True, grid=(1,1), nice_aspect_ratio=True,
             plt.gca().arrow(tail[0], tail[1], new_x, new_y,
                             head_width=tip_length/1.5, head_length=tip_length,
                             fc=object.color, ec=object.color)
+        elif type(object) == Circle:
+            circle = plt.Circle(object.center, object.radius,
+                                color=object.color, fill=object.fill, alpha=object.alpha)
+            plt.gca().add_patch(circle)
         elif type(object) == Segment:
             x1, y1 = object.start_point
             x2, y2 = object.end_point
@@ -137,3 +154,4 @@ def draw(*objects, origin=True, axes=True, grid=(1,1), nice_aspect_ratio=True,
         plt.savefig(save_as)
 
     plt.show()
+#%%
